@@ -41,13 +41,15 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  # environment.systemPackages = with pkgs; [
-  #   wget vim
-  # ];
+  environment.systemPackages = with pkgs; [
+    alacritty
+    rofi
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   programs.fish.enable = true;
+  programs.slock.enable = true;
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
   #   enable = true;
@@ -74,16 +76,22 @@
   # hardware.pulseaudio.enable = true;
 
   # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-  # services.xserver.layout = "us";
-  # services.xserver.xkbOptions = "eurosign:e";
+  services.xserver.enable = true;
+  services.xserver.xkbModel = "hhk";
+  services.xserver.layout = "us,us";
+  services.xserver.xkbOptions = "compose:sclk,grp:shifts_toggle";
+  services.xserver.xkbVariant = "altgr-intl,dvorak-alt-intl";
 
   # Enable touchpad support.
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput.enable = true;
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
+
+  services.xserver.windowManager.spectrwm.enable = true;
+
+  services.unclutter-xfixes.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pancho = {
