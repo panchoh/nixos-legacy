@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -e
+set -x
+
+# Mon 03 Aug 2020 06:09:12 PM UTC
+# https://nixos.org/nixos/manual/#sec-installation
+
+PBD=/dev/vda # Primary Block Device
+
+parted --script "$PBD" -- mklabel gpt
+parted --script "$PBD" -- mkpart primary 512MiB -8GiB
+parted --script "$PBD" -- mkpart primary linux-swap -8GiB 100%
+parted --script "$PBD" -- mkpart ESP fat32 1MiB 512MiB
+parted --script "$PBD" -- set 3 boot on
+
+MAIN="$PBD"1
+SWAP="$PBD"2
+ESP="$PBD"3
+
+mkfs.btrfs -f -L nixos "$MAIN"
+mkswap -L swap "$SWAP"
+mkfs.fat -F 32 -n boot "$ESP"
+
+sleep 1 # give time for the kernel to settle
+mount /dev/disk/by-label/nixos /mnt
+mkdir -p /mnt/boot
+mount /dev/disk/by-label/boot /mnt/boot
+swapon "$SWAP"
+
+nixos-generate-config --root /mnt
