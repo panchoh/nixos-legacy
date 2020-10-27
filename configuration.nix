@@ -81,6 +81,11 @@
   services.xserver.layout = "us,us";
   services.xserver.xkbOptions = "compose:sclk,grp:shifts_toggle";
   services.xserver.xkbVariant = "altgr-intl,dvorak-alt-intl";
+  #services.xserver.videoDrivers = [ "intel" ];
+  services.xserver.deviceSection = ''
+    Option "DRI" "3"
+    #Option "TearFree" "true"
+  '';
 
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
