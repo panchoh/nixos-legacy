@@ -50,6 +50,7 @@
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   programs.fish.enable = true;
+  programs.vim.defaultEditor = true;
   programs.slock.enable = true;
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
