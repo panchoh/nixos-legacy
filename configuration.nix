@@ -93,6 +93,19 @@
 
   services.unclutter-xfixes.enable = true;
 
+  fonts = {
+    enableDefaultFonts = true;
+    fonts = [
+      pkgs.ibm-plex
+    ];
+
+    fontconfig = {
+      defaultFonts = {
+        monospace = [ "IBM Plex" ];
+      };
+    };
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pancho = {
     isNormalUser = true;
