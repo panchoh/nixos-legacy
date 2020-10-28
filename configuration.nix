@@ -16,7 +16,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # networking.hostName = "nixos"; # Define your hostname.
+  powerManagement.cpuFreqGovernor = "performance";
+
+  networking.hostName = "cobalt"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
@@ -45,27 +47,47 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     alacritty
+    xorg.xrandr
+    xorg.xsetroot
     rofi
+    pandoc
+    git
+#    ((emacsPackagesNgGen emacs).emacsWithPackages (epkgs: [
+#      epkgs.vterm
+#      epkgs.pdf-tools
+#    ]))
+    ((emacsPackagesGen emacs).emacsWithPackages (epkgs: [
+      epkgs.vterm
+      epkgs.pdf-tools
+    ]))
+    emacs-all-the-icons-fonts
+    ripgrep
+    coreutils
+    fd
+    clang
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
+  programs.bcc.enable = true;
   programs.fish.enable = true;
   programs.vim.defaultEditor = true;
   programs.ssh.startAgent = true;
   programs.mosh.enable = true;
   programs.slock.enable = true;
   programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  #   pinentryFlavor = "gnome3";
-  # };
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryFlavor = "gtk2";
+  };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Enable the fail2ban service.
+  services.fail2ban.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -80,20 +102,45 @@
   # sound.enable = true;
   # hardware.pulseaudio.enable = true;
 
+  services.fwupd.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.displayManager.setupCommands = ''
+    # modesetting
+    #${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --off --output DP-1 --primary --mode 3840x1600 --pos 0x0 --rotate normal --output HDMI-1 --off --output DP-2 --off
+    # intel
+    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP1 --off --output DP1 --primary --mode 3840x1600 --pos 0x0 --rotate normal --output DP2 --off --output HDMI1 --off --output VIRTUAL1 --off
+    ${pkgs.xorg.xsetroot}/bin/xsetroot -solid '#282A36'
+  '';
+
+  services.xserver.displayManager.lightdm.greeters.mini = {
+    enable = true;
+    user = "pancho";
+    extraConfig = ''
+      [greeter]
+      show-password-label = false
+      [greeter-theme]
+      font = IBM Plex Mono
+      #font-size = 2em
+      #background-image = "/home/pancho/backgrounds/Camera_Film_by_Markus_Spiske.jpg"
+      background-image = ""
+      '';
+    };
+
   services.xserver.xkbModel = "hhk";
   services.xserver.layout = "us,us";
   services.xserver.xkbOptions = "compose:sclk,grp:shifts_toggle";
   services.xserver.xkbVariant = "altgr-intl,dvorak-alt-intl";
-  #services.xserver.videoDrivers = [ "intel" ];
+  #services.xserver.videoDrivers = [ "modesetting" ];
+  #services.xserver.useGlamor = true;
+  services.xserver.videoDrivers = [ "intel" ];
   services.xserver.deviceSection = ''
-    Option "DRI" "3"
-    #Option "TearFree" "true"
+    Option "TearFree" "true"
   '';
 
   # Enable touchpad support.
-  services.xserver.libinput.enable = true;
+  # services.xserver.libinput.enable = true;
 
   # Enable the KDE Desktop Environment.
   # services.xserver.displayManager.sddm.enable = true;
@@ -111,7 +158,9 @@
 
     fontconfig = {
       defaultFonts = {
-        monospace = [ "IBM Plex" ];
+        serif = [ "IBM Plex" ];
+        sansSerif = [ "IBM Plex Sans" ];
+        monospace = [ "IBM Plex Mono" ];
       };
     };
   };
@@ -119,11 +168,13 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.pancho = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "libvirtd" ]; # Enable ‘sudo’ for the user.
     shell = pkgs.fish;
   };
 
   security.sudo.wheelNeedsPassword = false;
+
+  virtualisation.libvirtd.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -131,7 +182,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "20.03"; # Did you read the comment?
+  system.stateVersion = "20.09"; # Did you read the comment?
 
 }
 
