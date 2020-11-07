@@ -121,13 +121,23 @@
     enable = true;
     user = "pancho";
     extraConfig = ''
+      # https://github.com/prikhi/lightdm-mini-greeter/blob/master/data/lightdm-mini-greeter.conf
       [greeter]
       show-password-label = false
+      password-alignment = left
+
+      [greeter-hotkeys]
+      mod-key = meta
+      shutdown-key = s
+      restart-key = r
+
       [greeter-theme]
-      font = IBM Plex Mono
-      #font-size = 2em
-      #background-image = "/home/pancho/backgrounds/Camera_Film_by_Markus_Spiske.jpg"
+      font = "IBM Plex Mono"
+      font-size = 1.1em
       background-image = ""
+      #background-image = "/srv/backgrounds/Camera_Film_by_Markus_Spiske.jpg"
+      #background-image = "/srv/backgrounds/dracula-base.png"
+      background-color = "#282A36"
       '';
     };
 
