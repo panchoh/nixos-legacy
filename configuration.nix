@@ -50,6 +50,7 @@
     alacritty
     xorg.xrandr
     xorg.xsetroot
+    xloadimage
     rofi
     pandoc
     git
@@ -112,7 +113,8 @@
     #${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --off --output DP-1 --primary --mode 3840x1600 --pos 0x0 --rotate normal --output HDMI-1 --off --output DP-2 --off
     # intel
     ${pkgs.xorg.xrandr}/bin/xrandr --output eDP1 --off --output DP1 --primary --mode 3840x1600 --pos 0x0 --rotate normal --output DP2 --off --output HDMI1 --off --output VIRTUAL1 --off
-    ${pkgs.xorg.xsetroot}/bin/xsetroot -solid '#282A36'
+    ##${pkgs.xorg.xsetroot}/bin/xsetroot -solid '#282A36'
+    ${pkgs.xloadimage}/bin/xsetbg -onroot -fullscreen -border '#282A36' /srv/backgrounds/dracula-base.png
   '';
 
   services.xserver.displayManager.lightdm.greeters.mini = {
